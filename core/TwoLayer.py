@@ -4,8 +4,8 @@ Created on Tue Aug  4 13:55:37 2020
 
 @author: ŠUŠNJAR
 """
-import Functions as fn
-from DataStructures import* 
+import core.Functions as fn
+from core.DataStructures import* 
 import copy
 
 di = DataInput("file_input.txt")

@@ -7,12 +7,12 @@ Created on Fri Aug  7 16:03:36 2020
 import numpy as np
 import math
 import matplotlib.pyplot as plt
-
+import core.ResolutionToPoints as rtp
 class Spectrum(object):
     #lambda - l
     #value of spectrum - s
     #number of points - n_points
-    def __init__(self,info):
+    def __init__(self,info, instrumentData):
         """
         
 
@@ -27,6 +27,7 @@ class Spectrum(object):
 
         """
         self.info = info
+        self.instrumentData = instrumentData
     
     def read_from_file(self,filename,separator=' '):
         """
@@ -46,25 +47,25 @@ class Spectrum(object):
         None.
 
         """
-        self.n_points = 0
+        self.instrumentData.n_points  = 0
         f1 = open(filename,"r")
         while(True):
             if (f1.readline()==""):
                 break
             else:
-                self.n_points+=1
+                self.instrumentData.n_points +=1
         f1.close()
         f2 = open(filename,"r")
-        self.l = np.zeros(self.n_points,dtype=np.float)
-        self.s = np.zeros(self.n_points,dtype=np.float)
-        for i in range(0, self.n_points):
+        self.l = np.zeros(self.instrumentData.n_points ,dtype=np.float)
+        self.s = np.zeros(self.instrumentData.n_points ,dtype=np.float)
+        for i in range(0, self.instrumentData.n_points ):
             string = f2.readline()
             ind = string.find(separator)
             self.l[i] = (float)(string[:ind])
             self.s[i] = (float)(string[ind+1:-1])
         f2.close()
     
-    def set_gaussian(self, mean, sigma, number_of_points, lambda_min, lambda_max, amplitude):
+    def set_gaussian(self, mean, amplitude):
         """
         
 
@@ -88,23 +89,22 @@ class Spectrum(object):
         None.
 
         """
-        if (number_of_points <= 0 or not(number_of_points==(int)(number_of_points))):
-            print("Error. Positive integer expected for number of points.")
-        elif (number_of_points == 1):
-            self.n_points = number_of_points
-            self.l = np.zeros(self.n_points,dtype=np.float)
-            self.s = np.zeros(self.n_points,dtype=np.float)
+
+        if self.instrumentData.n_points  == 1:
+            self.l = np.zeros(1,dtype=np.float)
+            self.s = np.zeros(1,dtype=np.float)
             self.l[0] = mean
             self.s[0] = amplitude
         else:
-            self.n_points = number_of_points
-            dl = (lambda_max-lambda_min)/(self.n_points-1)
-            self.l = np.zeros(self.n_points,dtype=np.float)
-            self.s = np.zeros(self.n_points,dtype=np.float)
-            for i in range(0,self.n_points):
-                lam = lambda_min+i*dl
-                self.l[i] = lam
-                self.s[i] = amplitude*math.exp(-pow(lam-mean,2)/(2*pow(sigma,2)))
+            max_wn = self.instrumentData.max_wavenumber
+            min_wn = self.instrumentData.min_wavenumber
+            dl = (max_wn-min_wn)/(self.instrumentData.n_points -1)
+            self.l = np.zeros(self.instrumentData.n_points ,dtype=np.float)
+            self.s = np.zeros(self.instrumentData.n_points ,dtype=np.float)
+            for i in range(0,self.instrumentData.n_points ):
+                wn = min_wn+i*dl
+                self.l[i] = wn
+                self.s[i] = amplitude*math.exp(-pow(wn-mean,2)/(2*pow(self.instrumentData.sigma,2)))
     
     def copy_from(self,spec,limit=-1):
         """
@@ -124,17 +124,17 @@ class Spectrum(object):
         """
         
         if (limit>=0 and limit<spec.n_points):
-            self.n_points = limit+1
-            self.l = np.zeros(self.n_points,dtype=np.float)
-            self.s = np.zeros(self.n_points,dtype=np.float)
-            for i in range(0,self.n_points):
+            self.instrumentData.n_points  = limit+1
+            self.l = np.zeros(self.instrumentData.n_points ,dtype=np.float)
+            self.s = np.zeros(self.instrumentData.n_points ,dtype=np.float)
+            for i in range(0,self.instrumentData.n_points ):
                 self.l[i] = spec.l[i]
                 self.s[i] = spec.s[i]
         else:
-            self.n_points = spec.n_points
-            self.l = np.zeros(self.n_points,dtype=np.float)
-            self.s = np.zeros(self.n_points,dtype=np.float)
-            for i in range(0,self.n_points):
+            self.instrumentData.n_points  = spec.n_points
+            self.l = np.zeros(self.instrumentData.n_points ,dtype=np.float)
+            self.s = np.zeros(self.instrumentData.n_points ,dtype=np.float)
+            for i in range(0,self.instrumentData.n_points ):
                 self.l[i] = spec.l[i]
                 self.s[i] = spec.s[i]
             if (limit != -1):
@@ -159,7 +159,7 @@ class Spectrum(object):
         None.
 
         """
-        for i in range(0,self.n_points):
+        for i in range(0,self.instrumentData.n_points ):
                 lam = self.l[i]
                 self.s[i] = amplitude*math.exp(-pow(lam-mean,2)/(2*pow(sigma,2)))
         
@@ -181,10 +181,10 @@ class Spectrum(object):
         """
         
         S1new, S2new = merge_spectra(self, S2)
-        self.n_points = S1new.n_points
+        self.instrumentData.n_points  = S1new.n_points
         if (info != ""):
             self.info = info
-        for i in range(0,self.n_points):
+        for i in range(0,self.instrumentData.n_points ):
             S1new.s[i] = S1new.s[i]+S2new.s[i]
         self.l = S1new.l
         self.s = S1new.s
@@ -204,7 +204,7 @@ class Spectrum(object):
 
         """
         
-        for i in range(0,self.n_points):
+        for i in range(0,self.instrumentData.n_points ):
             self.s[i] *= factor
         
     
@@ -217,14 +217,14 @@ class Spectrum(object):
 
     def first_derivative(self):
         fd = Spectrum(self.info+' - first derivative')
-        fd.n_points = self.n_points
-        fd.l = np.zeros(self.n_points,dtype = np.float)
-        fd.s = np.zeros(self.n_points,dtype = np.float)
-        for i in range(0, self.n_points-1):
+        fd.n_points = self.instrumentData.n_points 
+        fd.l = np.zeros(self.instrumentData.n_points ,dtype = np.float)
+        fd.s = np.zeros(self.instrumentData.n_points ,dtype = np.float)
+        for i in range(0, self.instrumentData.n_points -1):
             fd.l[i] = self.l[i]
             fd.s[i] = (self.s[i+1]-self.s[i])/(self.l[i+1]-self.l[i])
-        fd.l[self.n_points-1] = self.l[self.n_points-1]
-        fd.s[self.n_points-1] = 0
+        fd.l[self.instrumentData.n_points -1] = self.l[self.instrumentData.n_points -1]
+        fd.s[self.instrumentData.n_points -1] = 0
         return fd
         
 
@@ -250,7 +250,7 @@ class Signal(object):
         None.
 
         """
-        self.n_points = n_points
+        self.instrumentData.n_points  = n_points
         if (n_points > 0):
             self.s = np.zeros((n_points,length),dtype=np.float)
             self.l = np.zeros(n_points,dtype=np.float)
@@ -285,7 +285,7 @@ class Signal(object):
                 length+=1
         f1.close()
         f2 = open(filename,"r")
-        self.n_points = 0 #Signal is not decomposed by wavelengths
+        self.instrumentData.n_points  = 0 #Signal is not decomposed by wavelengths
         self.t = np.zeros(length,dtype=np.float)
         self.s = np.zeros(length,dtype=np.float)
         for i in range(0, length):
@@ -331,7 +331,7 @@ class Signal(object):
                 length+=1
         f1.close()
         f2 = open(filename,"r")
-        self.n_points = n_points
+        self.instrumentData.n_points  = n_points
         self.t = np.zeros(length,dtype=np.float)
         self.l = np.zeros(n_points,dtype=np.float)
         self.s = np.zeros((n_points,length),dtype=np.float)
@@ -356,7 +356,7 @@ class Signal(object):
         f2.close()
     
     def plot_at_wavelength(self,wavelength,title,xlabel,ylabel):
-        if (self.n_points > 0):
+        if (self.instrumentData.n_points  > 0):
             plt.title(title)
             plt.xlabel(xlabel)
             plt.ylabel(ylabel)
@@ -367,7 +367,7 @@ class Signal(object):
             print("Error. Signal is not prepared in a proper format. Try plotting using the function: plot.")
     
     def plot(self,title,xlabel,ylabel):
-        if (self.n_points == 0):
+        if (self.instrumentData.n_points  == 0):
             plt.title(title)
             plt.xlabel(xlabel)
             plt.ylabel(ylabel)

@@ -5,7 +5,7 @@ Created on Wed Sep 16 12:33:23 2020
 @author: ŠUŠNJAR
 """
 
-import SignalsAndSystems as sis
+import core.SignalsAndSystems as sis
 import numpy as np
 import math
 

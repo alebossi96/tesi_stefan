@@ -6,7 +6,7 @@ Created on Tue Aug  4 14:11:02 2020
 """
 
 errorFormat = "Unexpected format of input file!\n"
-import Functions as fn
+import core.Functions as fn
 import math
 import numpy as np
 
@@ -306,7 +306,8 @@ class DataInput(object):
         self.v1=self.c/self.n1;
         
         f.close()
-        
+import os
+cwd = os.getcwd()
 class DataOutputRaw(object):
     # Structure of data output for the program cyl_lay2_turbo C version
 	# up dated on june 2003
@@ -319,8 +320,8 @@ class DataOutputRaw(object):
         self.kappa_j = np.zeros(di.n_kj,dtype=np.float)
         self.i_bound = np.zeros(di.n_kj*3,dtype=np.int)
         self.kappa_z0 = np.zeros(di.n_kj*3*di.ni,dtype=np.float)
-        
-        f=open("j0.txt","r")
+        import os
+        f=open(os.path.dirname(__file__)+"/j0.txt","r")
         for i in range(0,di.n_kj):
             self.kappa_j[i] = ((float)(f.readline()))/di.R
         f.close()

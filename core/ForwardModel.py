@@ -4,11 +4,11 @@ Created on Sun Aug  9 14:53:55 2020
 
 @author: ŠUŠNJAR
 """
-import Functions as fn
-from DataStructures import*
+import core.Functions as fn
+from core.DataStructures import*
 import copy
 import numpy as np
-from SignalsAndSystems import*
+from core.SignalsAndSystems import*
 
 class ForwardModel(object):
     

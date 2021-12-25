@@ -1,0 +1,42 @@
+nome_file=Jacobian.txt
+indice_analisi=3
+spessore_0= 5.
+spessore_1= 15.
+numero_ricevitori=1
+distanza_1= 10.
+distanza_2= 10.
+distanza_3= 10.
+distanza_4= 10.
+distanza_5= 10.
+distanza_6= 10.
+distanza_7= 10.
+dimensione_laterale=100.
+assorbimento_0=0.005
+assorbimento_1=0.005
+scattering_0=1.
+scattering_1=1.
+Raman_scattering_0=0.001
+Raman_scattering_1=0.001
+indice_r_0=1.4
+indice_r_1=1.4
+indice_r_e=1.
+velocita_vuoto=0.299792458
+time_step=20.
+time_min=60.
+distance_step=1.
+distance_min=1.
+accuratezza_roots=1.e-7
+accuratezza_range=1.e-7
+punti_tpsf=300
+numero_roots_kn0=20
+numero_kj=20
+partizione_reale=2500
+partizione_immaginaria=250
+
+// commenti
+
+1) Il numero massimo ricevitori n_rec è 7 (ma il valore può essere impostato diversamente nel programma se necessario). Il valore massimo dei punti_tpsf è 500.
+2) Indice di analisi: 1=Riflettanza, 2=Trasmittanza
+3) Unità di misura: per gli spessori tutte le unità sono in mm, per assorbimento e scattering le unità sono mm^-1, per il tempo si ha ps, per le velocità si ha mm/ps.
+4) Dimensione laterale indica il raggio gometrico in mm della sezione di ingresso
+5) Geometria assunta: mezzo composto di due strati a sezione circolare. La sorgente si suppone nel centro della superficie di ingresso.

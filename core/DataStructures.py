@@ -12,7 +12,7 @@ import numpy as np
 
 N_REC_MAX = 7
 N_PUNTI_TPSF_MAX = 400
-
+#TODO i punti TPSF forse sono 256?
 
 class DataInput(object):
     #z0 = 5 # thickness of the first layer (mm)
@@ -54,7 +54,7 @@ class DataInput(object):
     #nh = 5000     # partition number of the interval for real roots 
     #nhi = 500    # partition number of the interval for immaginary roots
     #outputFile = "out.csv" #output file name
-    def __init__(self, filename):
+    def __init__(self, filename, geometry):
         f = open(filename, "r")
         key = "nome_file"
         string = ""
@@ -73,34 +73,13 @@ class DataInput(object):
         else:
             self.i_type = int(string)
         
-        key = "spessore_0"
-        status, string = fn.read_data_line_from_file(f, key)
-        if (status == -1):
-            print(errorFormat)
-        else:
-            self.z0 = float(string)
-            
-        key = "spessore_1"
-        status, string = fn.read_data_line_from_file(f, key)
-        if (status == -1):
-            print(errorFormat)
-        else:
-            self.z1 = float(string)
-
         key = "numero_ricevitori"
         status, string = fn.read_data_line_from_file(f, key)
         if (status == -1):
             print(errorFormat)
         else:
             self.n_rec = int(string)
-   
-        key = "distanza_1"
-        status, string = fn.read_data_line_from_file(f, key)
-        if (status == -1):
-            print(errorFormat)
-        else:
-            self.rec[0] = float(string)
-   
+
         key = "distanza_2"
         status, string = fn.read_data_line_from_file(f, key)
         if (status == -1):
@@ -149,48 +128,6 @@ class DataInput(object):
             print(errorFormat)
         else:
             self.R = float(string)
-   
-        key = "assorbimento_0"
-        status, string = fn.read_data_line_from_file(f, key)
-        if (status == -1):
-            print(errorFormat)
-        else:
-            self.ua0 = float(string)
- 
-        key = "assorbimento_1"
-        status, string = fn.read_data_line_from_file(f, key)
-        if (status == -1):
-            print(errorFormat)
-        else:
-            self.ua1 = float(string)
-   
-        key = "scattering_0"
-        status, string = fn.read_data_line_from_file(f, key)
-        if (status == -1):
-            print(errorFormat)
-        else:
-            self.ud0 = float(string)   
-      
-        key = "scattering_1"
-        status, string = fn.read_data_line_from_file(f, key)
-        if (status == -1):
-            print(errorFormat)
-        else:
-            self.ud1 = float(string)
-
-        key = "Raman_scattering_0"
-        status, string = fn.read_data_line_from_file(f, key)
-        if (status == -1):
-            print(errorFormat)
-        else:
-            self.usR0 = float(string)
-      
-        key = "Raman_scattering_1"
-        status, string = fn.read_data_line_from_file(f, key)
-        if (status == -1):
-            print(errorFormat)
-        else:
-            self.usR1 = float(string)
    
         key = "indice_r_0"
         status, string = fn.read_data_line_from_file(f, key)
@@ -304,7 +241,16 @@ class DataInput(object):
         self.pi=2*math.asin(1.);
         self.v0=self.c/self.n0;
         self.v1=self.c/self.n1;
-        
+
+        self.z0 = geometry.thickness_top
+        self.z1 = geometry.thickness_bottom
+        self.rec[0] = geometry.source_det_distance        
+        self.ua0 = geometry.mu_a_top
+        self.ua1 = geometry.mu_a_bottom
+        self.ud0 = geometry.mu_s_top
+        self.ud1 = geometry.mu_s_bottom
+        self.usR0 = geometry.mu_R_top
+        self.usR1 = geometry.mu_R_bottom
         f.close()
 import os
 cwd = os.getcwd()

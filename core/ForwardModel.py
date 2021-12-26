@@ -12,7 +12,8 @@ from core.SignalsAndSystems import*
 
 class ForwardModel(object):
     
-    def __init__(self, input_file='file_input.txt', relative_increment_absorption = 0.0001, update=False):
+    def __init__(self, geometry,
+                 input_file='file_input.txt', relative_increment_absorption = 0.0001, update=False):
         """
         
 
@@ -30,7 +31,7 @@ class ForwardModel(object):
         None.
 
         """
-        self.di = DataInput(input_file)
+        self.di = DataInput(input_file, geometry)
         self.relative_increment_absorption = relative_increment_absorption
         
         if (not update):

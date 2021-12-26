@@ -6,7 +6,7 @@ Created on Tue Aug  4 14:11:02 2020
 """
 
 errorFormat = "Unexpected format of input file!\n"
-import core.Functions as fn
+import tesi_stefan.core.Functions as fn
 import math
 import numpy as np
 

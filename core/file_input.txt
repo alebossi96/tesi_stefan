@@ -1,0 +1,27 @@
+nome_file=TwoLayers17
+indice_analisi=3
+numero_ricevitori=1
+distanza_2= 10.
+distanza_3= 10.
+distanza_4= 10.
+distanza_5= 10.
+distanza_6= 10.
+distanza_7= 10.
+dimensione_laterale=100.
+indice_r_0=1.4
+indice_r_1=1.4
+indice_r_e=1.
+velocita_vuoto=0.299792458
+time_step=20.
+time_min=60.
+distance_step=1.
+distance_min=1.
+accuratezza_roots=1.e-10
+accuratezza_range=1.e-10
+punti_tpsf=256
+numero_roots_kn0=35
+numero_kj=35
+partizione_reale=5000
+partizione_immaginaria=500
+
+

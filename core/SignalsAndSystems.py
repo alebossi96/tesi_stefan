@@ -7,7 +7,7 @@ Created on Fri Aug  7 16:03:36 2020
 import numpy as np
 import math
 import matplotlib.pyplot as plt
-import core.ResolutionToPoints as rtp
+import tesi_stefan.core.ResolutionToPoints as rtp
 class Spectrum(object):
     #lambda - l
     #value of spectrum - s
@@ -250,7 +250,7 @@ class Signal(object):
         None.
 
         """
-        self.instrumentData.n_points  = n_points
+        self.n_points  = n_points
         if (n_points > 0):
             self.s = np.zeros((n_points,length),dtype=np.float)
             self.l = np.zeros(n_points,dtype=np.float)
@@ -285,7 +285,7 @@ class Signal(object):
                 length+=1
         f1.close()
         f2 = open(filename,"r")
-        self.instrumentData.n_points  = 0 #Signal is not decomposed by wavelengths
+        self.n_points  = 0 #Signal is not decomposed by wavelengths
         self.t = np.zeros(length,dtype=np.float)
         self.s = np.zeros(length,dtype=np.float)
         for i in range(0, length):
@@ -331,7 +331,7 @@ class Signal(object):
                 length+=1
         f1.close()
         f2 = open(filename,"r")
-        self.instrumentData.n_points  = n_points
+        self.n_points  = n_points
         self.t = np.zeros(length,dtype=np.float)
         self.l = np.zeros(n_points,dtype=np.float)
         self.s = np.zeros((n_points,length),dtype=np.float)
@@ -355,19 +355,21 @@ class Signal(object):
             self.s[n_points-1][i] = (float)(string[:-1])
         f2.close()
     
-    def plot_at_wavelength(self,wavelength,title,xlabel,ylabel):
-        if (self.instrumentData.n_points  > 0):
+    def plot_at_wavelength(self,wavelength,title,xlabel,ylabel, yscale = 'log'):
+        if (self.n_points  > 0):
+            ind = find_nearest_wavelength(self.l,wavelength)
             plt.title(title)
             plt.xlabel(xlabel)
             plt.ylabel(ylabel)
-            ind = find_nearest_wavelength(self.l,wavelength)
             plt.plot(self.t,self.s[ind])
+            plt.yscale(yscale)
             plt.show()
+            
         else:
             print("Error. Signal is not prepared in a proper format. Try plotting using the function: plot.")
     
     def plot(self,title,xlabel,ylabel):
-        if (self.instrumentData.n_points  == 0):
+        if (self.n_points  == 0):
             plt.title(title)
             plt.xlabel(xlabel)
             plt.ylabel(ylabel)
@@ -383,7 +385,7 @@ class System(object):
     def read_from_file(self,filename,separator=' '):
         self.irf.read_from_file(filename,separator)
     
-    def set_gaussian_irf(self, mean, sigma, number_of_points, t_min, t_max, amplitude, normalize=True):
+    def set_gaussian_irf(self, shift, fwhm, number_of_points, t_min, t_max, amplitude, normalize=True):
         """
         
 
@@ -391,8 +393,8 @@ class System(object):
         ----------
         mean : float
             CENTRAL TIME INSTANT (MAXIMUM OF IRF).
-        sigma : float
-            STANDARD DEVIATION.
+        fwhm : float
+            full width at half maximum.
         number_of_points : int
             NUMBER OF POINTS (TIME INSTANTS) IN IRF.
         t_min : float
@@ -409,37 +411,22 @@ class System(object):
         None.
 
         """
+        sigma = fwhm/2.355
         suma = 0
         if (number_of_points <= 0 or not(number_of_points==(int)(number_of_points))):
             print("Error. Positive integer expected for number of points.")
-        elif (number_of_points == 1):
-            self.irf.n_points = 0
-            self.irf.t = np.zeros(number_of_points,dtype=np.float)
-            self.irf.s = np.zeros(number_of_points,dtype=np.float)
-            self.irf.t[0] = mean
-            self.irf.s[0] = amplitude
-        else:
-            self.irf.n_points = 0
-            dt = (t_max-t_min)/(number_of_points-1)
-            self.irf.t = np.zeros(number_of_points,dtype=np.float)
-            self.irf.s = np.zeros(number_of_points,dtype=np.float)
-            for i in range(0,number_of_points):
-                t = t_min+i*dt
-                self.irf.t[i] = t
-                self.irf.s[i] = amplitude*math.exp(-pow(t-mean,2)/(2*pow(sigma,2)))
-                suma += self.irf.s[i]
-        
-        if (normalize and number_of_points>1):
-            k = amplitude/suma #scaling factor
-            for i in range(0, number_of_points):
-                self.irf.s[i] *= k
-           
-            
-    
+        self.irf.n_points = 0
+        self.irf.t = np.linspace(start = t_min, stop = t_max, num = number_of_points)    
+        self.irf.s = np.exp(-np.square(self.irf.t-shift)/(2*pow(sigma,2)))
+        self.irf.conv_matrix = np.zeros((number_of_points,number_of_points))
+        for i in range(number_of_points):
+           self.irf.conv_matrix[i][i:] = self.irf.s[:(number_of_points-i)]
+        self.irf.conv_matrix = self.irf.conv_matrix.T 
+        if (normalize):
+            self.irf.s *=  1/(sigma*np.sqrt(2* math.pi))
     def filt(self, signal):
         """
         
-
         Parameters
         ----------
         s : SIGNAL
@@ -459,7 +446,7 @@ class System(object):
         #Otherwise, this method will not work properly
         len_s = len(s.t)
         len_irf = len(self.irf.t)
-        len_out = len_s+len_irf-1
+        len_out = len_s
         out = Signal(len_out,s.n_points)
         dt = s.t[1]-s.t[0]
         # if (s.n_points>0):
@@ -477,23 +464,20 @@ class System(object):
         #     for k in range(0,len_s):
         #         if (n-k>=indmin and n-k<=indmax):
         #             out.s[n-indmin] += s[k]*self.irf.s[n-k]
-        if (s.n_points>0):
-            for l in range(0,s.n_points):
-                out.l[l] = s.l[l]
-                for n in range(0, len_out):
-                    out.s[l][n] = 0
-                    out.t[n] = s.t[0] + self.irf.t[0] + n*dt
-                    for k in range(0,len_s):
-                        if (n-k>=0 and n-k<=len_irf-1):
-                            out.s[l][n] += s.s[l][k]*self.irf.s[n-k]
-        else:
-            for n in range(0,len_out):
-                out.s[n] = 0
-                out.t[n] = s.t[0] + self.irf.t[0] + n*dt
-                for k in range(0,len_s):
-                    if (n-k>=0 and n-k<=len_irf-1):
-                        out.s[n] += s[k]*self.irf.s[n-k]
-        
+        out.t = s.t
+        for l in range(0,s.n_points):
+            out.l[l] = s.l[l]
+            #TODO the convolution cannot work with np.convolve ->(boundary condition problem)
+            #TODO the one written below is too slow
+            
+            """
+            out.s[l] = np.convolve(s.s[l],self.irf.s, mode ='same')
+            for j in range(len_irf):
+                for k in range(len_irf):
+                    if j-k>-1:
+                       out.s[l][j] += s.s[l][k]*self.irf.s[j-k]
+            """
+            out.s[l] = np.matmul( self.irf.conv_matrix, s.s[l])
         return out
     
     def gated_signal(self, signal, n_gates, tmin, tmax):

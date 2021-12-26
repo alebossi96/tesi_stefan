@@ -4,16 +4,17 @@ Created on Sun Aug  9 14:53:55 2020
 
 @author: ŠUŠNJAR
 """
-import core.Functions as fn
-from core.DataStructures import*
+import tesi_stefan.core.Functions as fn
+from tesi_stefan.core.DataStructures import*
 import copy
 import numpy as np
-from core.SignalsAndSystems import*
+from tesi_stefan.core.SignalsAndSystems import*
+import os
 
 class ForwardModel(object):
     
     def __init__(self, geometry,
-                 input_file='file_input.txt', relative_increment_absorption = 0.0001, update=False):
+                 input_file = os.path.dirname(__file__) + '/file_input.txt', relative_increment_absorption = 0.0001, update=False):
         """
         
 
@@ -145,8 +146,8 @@ class ForwardModel(object):
         """
         S1 = Spectrum_Top_layer
         S2 = Spectrum_Bottom_layer
-        sig = Signal(self.di.n_tpsf,S1.n_points)
-        for i in range(0,S1.n_points):
+        sig = Signal(self.di.n_tpsf,S1.instrumentData.n_points)
+        for i in range(0,S1.instrumentData.n_points):
             sig.l[i] = S1.l[i]
             for j in range(0,self.di.n_tpsf):
                 sig.t[j] = self.di.tmin+j*self.di.dt

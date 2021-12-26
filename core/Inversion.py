@@ -5,7 +5,7 @@ Created on Wed Aug 12 20:12:45 2020
 @author: ŠUŠNJAR
 """
 import numpy as np
-import core.SignalsAndSystems as sis
+import tesi_stefan.core.SignalsAndSystems as sis
 import subprocess
 
 N_UNKNOWNS = 6

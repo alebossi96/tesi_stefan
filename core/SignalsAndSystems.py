@@ -354,7 +354,8 @@ class Signal(object):
                 string = string[ind+1:]
             self.s[n_points-1][i] = (float)(string[:-1])
         f2.close()
-    
+    def get_nearest_wavelength(self, wavelength):
+        return find_nearest_wavelength(self.l,wavelength)
     def plot_at_wavelength(self,wavelength,title,xlabel,ylabel, yscale = 'log'):
         if (self.n_points  > 0):
             ind = find_nearest_wavelength(self.l,wavelength)

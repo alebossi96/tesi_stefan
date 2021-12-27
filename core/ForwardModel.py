@@ -32,6 +32,8 @@ class ForwardModel(object):
         None.
 
         """
+        #TODO parte 1,2 critiche
+        
         self.di = DataInput(input_file, geometry)
         self.relative_increment_absorption = relative_increment_absorption
         
@@ -48,7 +50,8 @@ class ForwardModel(object):
             self.dpd1 = DataPlot()
             self.dpd2 = DataPlot()
             self.dpR = DataPlotRaman()
-            
+            #TODO critical
+            #TODO capire se queste funzioni esistono già fatte
             fn.f_roots(self.di,self.d_o)
             fn.f_roots(self.did1,self.d_o_d1)
             fn.f_roots(self.did2,self.d_o_d2)
@@ -61,15 +64,13 @@ class ForwardModel(object):
                 fn.f_plot(self.did1,self.d_o_d1,self.dpd1,i_r)
                 fn.f_plot(self.did2,self.d_o_d2,self.dpd2,i_r)
                 fn.f_plot_Raman(self.di,self.did1,self.did2,self.dp,self.dpd1,self.dpd2,self.dpR,i_r)
-            
-            
+
             #Calculation of sensitivity matrix W(x)
             self.W1 = np.zeros(self.di.n_tpsf,dtype=np.float)
             self.W2 = np.zeros(self.di.n_tpsf,dtype=np.float)
             for i in range(0,self.di.n_tpsf):
                 self.W1[i] = self.dp.r_tpsf[i][0]*self.di.v0*self.dpR.t1avg[i][0]
                 self.W2[i] = self.dp.r_tpsf[i][0]*self.di.v1*self.dpR.t2avg[i][0]
-        
     def calculate(self):
         self.d_o = DataOutputRaw(self.di)
         self.did1 = copy.deepcopy(self.di)

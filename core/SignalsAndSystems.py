@@ -106,6 +106,27 @@ class Spectrum(object):
                 self.l[i] = wn
                 self.s[i] = amplitude*math.exp(-pow(wn-mean,2)/(2*pow(self.instrumentData.sigma,2)))
     
+    def set_from_rec(self, rec, spectra = None):
+        """
+        
+
+        Parameters
+        ----------
+        rec : reconstruction data
+        spectra : 
+        Returns
+        -------
+        None.
+
+        """
+
+        self.l = rec.wavenumber()
+        if not spectra:
+            self.s = rec.spectrograph()
+        else:
+            self.s = spectra
+       
+    
     def copy_from(self,spec,limit=-1):
         """
         
@@ -294,6 +315,11 @@ class Signal(object):
             self.t[i] = (float)(string[:ind])
             self.s[i] = (float)(string[ind+1:-1])
         f2.close()
+    def read_from_reconstruction(self, rec):
+        self.n_points  = len(rec.wavenumber())
+        self.s = rec.reconstruction()
+        self.l = rec.wavenumber()
+        self.t = rec.time()
     
     def read_from_file_decomposed(self,filename,separator=','):
         """
@@ -423,8 +449,13 @@ class System(object):
         for i in range(number_of_points):
            self.irf.conv_matrix[i][i:] = self.irf.s[:(number_of_points-i)]
         self.irf.conv_matrix = self.irf.conv_matrix.T 
+        """
+        if np.linalg.det(self.irf.conv_matrix) == 0:
+            
+            raise ValueError("determinant is 0 in the convolution matrix due to numerical instabilities")
+        """
         if (normalize):
-            self.irf.s *=  1/(sigma*np.sqrt(2* math.pi))
+            self.irf.s *= 1/(sigma*np.sqrt(2* math.pi))
     def filt(self, signal):
         """
         
@@ -480,7 +511,61 @@ class System(object):
             """
             out.s[l] = np.matmul( self.irf.conv_matrix, s.s[l])
         return out
-    
+
+    def deconvolve(self, s):
+        """
+        
+        Parameters
+
+        ----------
+        s : SIGNAL
+            INPUT SIGNAL. SAMPLING PERIODS OF s AND IMPULSE RESPONSE FUNCTION OF THE SYSTEM irf SHOULD BE EQUAL.
+
+        Returns
+        -------
+        out : SIGNAL
+            OUTPUT SIGNAL, OBTAINED AFTER PASSING THE INPUT SIGNAL THROUGH THE FILTER DEFINED BY THE IMPULSE RESPONSE FUNCTION. IMPULSE RESPONSE FUNCTION OF THIS FILTER IS DEFINED BY THE INSTRUMENT RESPONSE FUNCTION OF THE SYSTEM.
+
+        """
+        len_s = len(s.t)
+        len_irf = len(self.irf.t)
+        len_out = len_s
+        out = Signal(len_out,s.n_points)
+        out.t = s.t
+        B = np.linalg.pinv(self.irf.conv_matrix)
+        for l in range(0,s.n_points):
+            out.l[l] = s.l[l]
+            #TODO issue with numerical stability!
+            
+            #out.s[l] = np.linalg.solve(self.irf.conv_matrix, s.s[l])
+            out.s[l] = np.matmul(B, s.s[l])
+        return out
+    def convolve(self, s):
+        """
+        
+        Parameters
+        ----------
+        s : SIGNAL
+            INPUT SIGNAL. SAMPLING PERIODS OF s AND IMPULSE RESPONSE FUNCTION OF THE SYSTEM irf SHOULD BE EQUAL.
+
+        Returns
+        -------
+        out : SIGNAL
+            OUTPUT SIGNAL, OBTAINED AFTER PASSING THE INPUT SIGNAL THROUGH THE FILTER DEFINED BY THE IMPULSE RESPONSE FUNCTION. IMPULSE RESPONSE FUNCTION OF THIS FILTER IS DEFINED BY THE INSTRUMENT RESPONSE FUNCTION OF THE SYSTEM.
+
+        """
+        len_s = len(s.t)
+        len_irf = len(self.irf.t)
+        len_out = len_s
+        out = Signal(len_out,s.n_points)
+        out.t = s.t
+        for l in range(0,s.n_points):
+            out.l[l] = s.l[l]
+            #TODO the convolution cannot work with np.convolve ->(boundary condition problem)
+            #TODO the one written below is too slow
+            out.s[l] = np.matmul(self.irf.conv_matrix, s.s[l])
+        return out
+            
     def gated_signal(self, signal, n_gates, tmin, tmax):
         """
         

@@ -16,11 +16,11 @@ class Inversion(object):
         self.W2 = W2
         self.signal = signal
     
-    def reconstruct_spectra_lsm(self): #When sensitivity matrix is W(x)
+    def reconstruct_spectra_lsm(self, instrument_data): #When sensitivity matrix is W(x)
         Wt = np.matrix([self.W1, self.W2])
         W = Wt.transpose()
-        S1 = sis.Spectrum("First layer spectrum")
-        S2 = sis.Spectrum("Second layer spectrum")
+        S1 = sis.Spectrum("First layer spectrum", instrument_data)
+        S2 = sis.Spectrum("Second layer spectrum", instrument_data)
         S1.n_points = self.signal.n_points
         S2.n_points = self.signal.n_points
         S1.l = np.zeros(S1.n_points,dtype=np.float)
@@ -37,9 +37,9 @@ class Inversion(object):
             S2.s[l] = x[1]
         return S1, S2
     
-    def reconstruct_spectra_lsm_wavelength_dependent(self): #When sensitivity matrix is W(lambda,x)
-        S1 = sis.Spectrum("First layer spectrum")
-        S2 = sis.Spectrum("Second layer spectrum")
+    def reconstruct_spectra_lsm_wavelength_dependent(self,instrument_data): #When sensitivity matrix is W(lambda,x)
+        S1 = sis.Spectrum("First layer spectrum",instrument_data)
+        S2 = sis.Spectrum("Second layer spectrum",instrument_data)
         S1.n_points = self.signal.n_points
         S2.n_points = self.signal.n_points
         S1.l = np.zeros(S1.n_points,dtype=np.float)

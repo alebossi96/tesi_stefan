@@ -13,7 +13,7 @@ import os
 
 class ForwardModel(object):
     
-    def __init__(self, geometry,
+    def __init__(self, geometry, time_step = 15.03, n_tpsf =256,
                  input_file = os.path.dirname(__file__) + '/file_input.txt', relative_increment_absorption = 0.0001, update=False):
         """
         
@@ -34,7 +34,7 @@ class ForwardModel(object):
         """
         #TODO parte 1,2 critiche
         
-        self.di = DataInput(input_file, geometry)
+        self.di = DataInput(input_file, geometry, time_step, n_tpsf)
         self.relative_increment_absorption = relative_increment_absorption
         
         if (not update):
@@ -179,6 +179,8 @@ class ForwardModel(object):
         """
         dt = self.di.dt
         if (tmin<=self.di.tmin or tmax>=self.di.tmin+(self.di.n_tpsf-1)*dt or tmin>=tmax):
+            print(tmax,self.di.tmin+(self.di.n_tpsf-1)*dt)
+            print(tmax)
             print("Error. Start and end time of gates should be inside the interval on which the model output is defined. Unchanged self.W1 and self.W2 are returned from this object of class ForwardModel.")
             return self.W1, self.W2
         

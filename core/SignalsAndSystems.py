@@ -106,13 +106,13 @@ class Spectrum(object):
                 self.l[i] = wn
                 self.s[i] = amplitude*math.exp(-pow(wn-mean,2)/(2*pow(self.instrumentData.sigma,2)))
     
-    def set_from_rec(self, rec, spectra = None):
+    def set_from_rec(self, wavenumber, spectra = None):
         """
         
 
         Parameters
         ----------
-        rec : reconstruction data
+        wavenumber : reconstruction data
         spectra : 
         Returns
         -------
@@ -120,11 +120,9 @@ class Spectrum(object):
 
         """
 
-        self.l = rec.wavenumber()
-        if not spectra:
-            self.s = rec.spectrograph()
-        else:
-            self.s = spectra
+        self.l = wavenumber
+        
+        self.s = spectra
        
     
     def copy_from(self,spec,limit=-1):
@@ -533,12 +531,17 @@ class System(object):
         out = Signal(len_out,s.n_points)
         out.t = s.t
         B = np.linalg.pinv(self.irf.conv_matrix)
+        import sklearn.linear_model as lm 
         for l in range(0,s.n_points):
             out.l[l] = s.l[l]
             #TODO issue with numerical stability!
             
             #out.s[l] = np.linalg.solve(self.irf.conv_matrix, s.s[l])
             out.s[l] = np.matmul(B, s.s[l])
+            #clf = lm.Ridge(alpha = 0 )
+            
+            #clf.fit(self.irf.conv_matrix, out.s[l])
+            #out.s[l] = clf.coef_
         return out
     def convolve(self, s):
         """
@@ -590,7 +593,7 @@ class System(object):
         s = signal
         if (tmin<=s.t[0] or tmax>=s.t[-1] or tmin>=tmax):
             print("Error. Start and end time of gates should be inside the interval on which the signal s is defined. Input signal s is returned.")
-            return s
+            return 
         dt = s.t[1]-s.t[0]
         dt_gate = (tmax-tmin)/n_gates #Duration of single time gate
         out = Signal(n_gates, s.n_points)

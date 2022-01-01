@@ -54,7 +54,7 @@ class DataInput(object):
     #nh = 5000     # partition number of the interval for real roots 
     #nhi = 500    # partition number of the interval for immaginary roots
     #outputFile = "out.csv" #output file name
-    def __init__(self, filename, geometry):
+    def __init__(self, filename, geometry, time_step, n_tpsf):
         f = open(filename, "r")
         key = "nome_file"
         string = ""
@@ -157,13 +157,6 @@ class DataInput(object):
         else:
             self.c = float(string)
         
-        key = "time_step"
-        status, string = fn.read_data_line_from_file(f, key)
-        if (status == -1):
-            print(errorFormat)
-        else:
-            self.dt = float(string)    
-   
         key = "time_min"
         status, string = fn.read_data_line_from_file(f, key)
         if (status == -1):
@@ -198,13 +191,6 @@ class DataInput(object):
             print(errorFormat)
         else:
             self.precisione = float(string)   
-   
-        key = "punti_tpsf"
-        status, string = fn.read_data_line_from_file(f, key)
-        if (status == -1):
-            print(errorFormat)
-        else:
-            self.n_tpsf = int(string)
    
         key = "numero_roots_kn0"
         status, string = fn.read_data_line_from_file(f, key)
@@ -241,7 +227,9 @@ class DataInput(object):
         self.pi=2*math.asin(1.);
         self.v0=self.c/self.n0;
         self.v1=self.c/self.n1;
-
+        
+        self.dt = time_step
+        self.n_tpsf = n_tpsf
         self.z0 = geometry.thickness_top
         self.z1 = geometry.thickness_bottom
         self.rec[0] = geometry.source_det_distance        

@@ -30,7 +30,7 @@ def height_of_peak(s_the, s_exp):
         (EXPERIMENTAL PEAK POSITION / THEORETICAL PEAK POSITION) - 1. (RELATIVE ERROR ON X-AXIS.)
 
     """
-    length = s_the.n_points
+    length = s_the.instrumentData.n_points
     indmax_the = 0
     indmax_exp = 0
     for i in range(1,length):
@@ -45,12 +45,12 @@ def height_of_peak(s_the, s_exp):
     return rel_err_height, rel_err_position
 
 def contrast_to_noise(s_the, s_exp):
-    length = s_the.n_points
+    length = s_the.instrumentData.n_points
     indmax_the = 0
     indmax_exp = 0
-    noise = sis.Spectrum('Noise = Experimental - Theoretical')
-    noise.l = np.zeros(s_the.n_points,dtype=np.float)
-    noise.s = np.zeros(s_the.n_points,dtype=np.float)
+    noise = sis.Spectrum('Noise = Experimental - Theoretical', s_the.instrumentData)
+    noise.l = np.zeros(s_the.instrumentData.n_points,dtype=np.float)
+    noise.s = np.zeros(s_the.instrumentData.n_points,dtype=np.float)
     var = 0
     for i in range(1,length):
         if (s_the.s[indmax_the]<s_the.s[i]):
@@ -74,7 +74,7 @@ def contrast_to_noise(s_the, s_exp):
     return s_exp.s[indmax_exp]/math.sqrt(var)
 
 def suppression(s1_the, s1_exp, s2_the, s2_exp):
-    length = s1_the.n_points
+    length = s1_the.instrumentData.n_points
     dl = s1_the.l[1]-s1_the.l[0]
     indmax1_the = 0
     indmax1_exp = 0

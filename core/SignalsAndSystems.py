@@ -8,6 +8,7 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 import tesi_stefan.core.ResolutionToPoints as rtp
+from  librerieTesi.diffuseRaman import core
 class Spectrum(object):
     #lambda - l
     #value of spectrum - s
@@ -277,6 +278,7 @@ class Signal(object):
             self.s = np.zeros(length,dtype=np.float)
         self.t = np.zeros(length,dtype=np.float)
     
+    
     def read_from_file(self,filename,separator=' '):
         """
         EACH LINE OF FILE SHOULD BE IN FORMAT '<time><separator><value>'. 
@@ -410,7 +412,7 @@ class System(object):
     def read_from_file(self,filename,separator=' '):
         self.irf.read_from_file(filename,separator)
     
-    def set_gaussian_irf(self, shift, fwhm, number_of_points, t_min, t_max, amplitude, normalize=True):
+    def set_gaussian_irf(self, shift, fwhm, number_of_points, t_min, t_max, amplitude, tau = 110, normalize=True):
         """
         
 
@@ -442,11 +444,16 @@ class System(object):
             print("Error. Positive integer expected for number of points.")
         self.irf.n_points = 0
         self.irf.t = np.linspace(start = t_min, stop = t_max, num = number_of_points)    
-        self.irf.s = np.exp(-np.square(self.irf.t-shift)/(2*pow(sigma,2)))
-        self.irf.conv_matrix = np.zeros((number_of_points,number_of_points))
-        for i in range(number_of_points):
-           self.irf.conv_matrix[i][i:] = self.irf.s[:(number_of_points-i)]
-        self.irf.conv_matrix = self.irf.conv_matrix.T 
+        conv_matrix = lambda x : core.conv_matrix(x,number_of_points)
+        conv_mat_laser = conv_matrix(np.exp(-np.square(self.irf.t-shift)/(2*pow(sigma,2))))
+        #tau = 87#110
+        conv_mat_hybrid = conv_matrix(np.exp(-self.irf.t/tau)) 
+        #tau =np.array([ 5.07001190e-13, -4.38702755e-10,  3.30862820e-07, -7.82957441e-03, 1.38088961e+01])
+        #conv_mat_hybrid = conv_matrix(np.exp(np.polyval(tau,self.irf.t))) 
+        #self.irf.conv_matrix = np.matmul(conv_mat_laser, conv_mat_hybrid)
+        #self.irf.s = np.matmul(conv_mat_laser,np.exp(-self.irf.t/tau))
+        self.irf.s = np.matmul(conv_mat_laser,np.exp(-self.irf.t/tau))
+        self.irf.conv_matrix = conv_matrix(self.irf.s)
         """
         if np.linalg.det(self.irf.conv_matrix) == 0:
             

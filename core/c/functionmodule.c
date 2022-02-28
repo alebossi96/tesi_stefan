@@ -20,12 +20,17 @@ static PyObject* py_f_roots(PyObject* self, PyObject* args) {
   d_o.i_bound = (int*)calloc(di.n_kj*3,sizeof(int));
   d_o.kappa_z0 = (double*)calloc(di.n_kj*3*di.ni,sizeof(double));
   set_double_array_from_np1D(d_o_py, "kappa_j",d_o.kappa_j);
+  set_double_array_from_np1D(d_o_py, "kappa_z0",d_o.kappa_z0);
+  set_int_array_from_np1D(d_o_py, "i_bound",d_o.i_bound);
   f_roots(di, &d_o);
   //TODO return & fill do_py
   fill_do_py(d_o_py, d_o);
   //TODO fare i free dei malloc
   return Py_None;
 }
+
+
+//-------------FPLOTS--------------------------------------------------------------------------------
 static PyObject* py_f_plot(PyObject* self, PyObject* args) {
   PyObject *di_py;
   PyObject *d_o_py;
@@ -33,18 +38,32 @@ static PyObject* py_f_plot(PyObject* self, PyObject* args) {
   int i_r;
   struct DataInput di;
   struct DataOutput_raw d_o;
-  struct Data_plot dp;
+  struct Data_plot dp_inner;
   if (!PyArg_ParseTuple(args, "OOOi", &di_py, &d_o_py, &dp_py, &i_r))
     return NULL;
   parse_di_py(di_py, &di);
-  //inizializzare d_o arrays
+  //inizializzare d_o arrays con 
   d_o.kappa_j= (double*)calloc(di.n_kj,sizeof(double));
   d_o.i_bound = (int*)calloc(di.n_kj*3,sizeof(int));
   d_o.kappa_z0 = (double*)calloc(di.n_kj*3*di.ni,sizeof(double));
   set_double_array_from_np1D(d_o_py, "kappa_j",d_o.kappa_j);
-  f_roots(di, &d_o);
+  set_double_array_from_np1D(d_o_py, "kappa_z0",d_o.kappa_z0);
+  set_int_array_from_np1D(d_o_py, "i_bound",d_o.i_bound);
+  //dp.r_tpsf = (double*)calloc(N_PUNTI_TPSF_MAX,N_REC_MAX,sizeof(double));
+  set_double_array_from_np1D(d_o_py, "kappa_j",d_o.kappa_j);
+  for (int j=0; j<N_REC_MAX; j++)
+	{
+	for (int i=0; i<N_PUNTI_TPSF_MAX; i++)
+		{
+		dp_inner.r_tpsf[i][j]=0.;
+		dp_inner.t_tpsf[i][j]=0.;
+		}	
+	}
+
+  f_plot(di,&d_o,&dp_inner,i_r);
   //TODO return & fill do_py
   fill_do_py(d_o_py, d_o);
+  fill_dp_py(dp_py,dp_inner);
   //TODO fare i free dei malloc
   return Py_None;
 }
@@ -59,6 +78,31 @@ void fill_do_py(PyObject *d_o_py,const struct DataOutput_raw d_o){
   free(d_o.kappa_z0);
 
 }
+
+void fill_dp_py(PyObject *dp_py, struct Data_plot dp){
+    PyArrayObject *data_py_r_tpsf = (PyArrayObject *) PyObject_GetAttrString(dp_py, "r_tpsf");
+    double *data_r_tpsf = (double *) PyArray_DATA(data_py_r_tpsf); //sono tutti in filap i
+    int cont = 0;
+    for(int i = 0; i<PyArray_DIMS(data_py_r_tpsf)[0]; i++){
+        for(int j = 0; j<PyArray_DIMS(data_py_r_tpsf)[1]; j++){
+            data_r_tpsf[cont] = dp.r_tpsf[i][j];
+            cont++;
+        }
+    }
+    PyArrayObject *data_py_t_tpsf = (PyArrayObject *) PyObject_GetAttrString(dp_py, "t_tpsf");
+    double *data_t_tpsf = (double *) PyArray_DATA(data_py_t_tpsf); //sono tutti in fila
+    cont = 0;
+    for(int i = 0; i<PyArray_DIMS(data_py_t_tpsf)[0]; i++){
+        for(int j = 0; j<PyArray_DIMS(data_py_t_tpsf)[1]; j++){
+            data_t_tpsf[cont] = dp.t_tpsf[i][j];
+            cont++;
+        }
+    }
+    //set_double_np2d_from_matrix(dp_py, "r_tpsf", dp.r_tpsf);
+    //set_double_np2d_from_matrix(dp_py, "t_tpsf", dp.t_tpsf);
+}
+
+
 void parse_di_py(PyObject *di_py,struct DataInput *di){
     set_int_from_py(di_py, "i_type", &di->i_type);
     set_int_from_py(di_py, "n_rec", &di->n_rec);
@@ -95,36 +139,7 @@ void parse_di_py(PyObject *di_py,struct DataInput *di){
     set_double_from_py(di_py, "usR0", &di->usR0); 
     set_double_from_py(di_py, "usR1", &di->usR1);
 }
-static PyObject* py_f_plot(PyObject* self, PyObject* args) {
-  PyObject * di_py, do_py, dp_py;
-  int i_r;
-  struct DataInput di;
-  struct DataOutput_raw d_o;
-   struct Data_plot dp;
-  if (!PyArg_ParseTuple(args, "OOOi", &di_py, &do_py, &dp_py, &i_r))
-    return NULL;
-  //TODO fill di
-  f_plot(di, &d_o, &dp, i_r);
 
-  //TODO return & fill do_py & dp_py
-
-}
-/*
-static PyObject* py_f_plot_Raman(PyObject* self, PyObject* args) {
-  PyObject * di_py, do_py, dp_py;
-  int i_r;
-  struct DataInput di;
-  struct DataOutput_raw d_o;
-   struct Data_plot dp;
-  if (!PyArg_ParseTuple(args, "OOOi", &di_py, &do_py, &dp_py, &i_r))
-    return NULL;
-  //TODO fill di
-  f_plot(di, &d_o, &dp, i_r);
-  
-  //TODO return & fill do_py & dp_py
-
-}
-*/
 
 void set_int_from_py(PyObject *obj, char *name, int *to_set){
     PyObject *attr = PyObject_GetAttrString(obj, name);
@@ -137,7 +152,17 @@ void set_double_from_py(PyObject *obj, char *name, double *to_set){
     PyArg_Parse(attr, "d", to_set);    
     //if(PRINT) printf("%s = %f\n", name, *to_set);
 }
-
+void set_double_np2d_from_matrix(PyObject *obj, char *name, double **to_set){
+    PyArrayObject *data_py = (PyArrayObject *) PyObject_GetAttrString(obj, name);
+    double *data = (double *) PyArray_DATA(data_py); //sono tutti in fila
+    int cont = 0;
+    for(int i = 0; i<PyArray_DIMS(data_py)[0]; i++){
+        for(int j = 0; j<PyArray_DIMS(data_py)[1]; j++){
+            data[cont] = to_set[i][j];
+            cont++;
+        }
+    }
+}
 void set_double_array_from_np1D(PyObject *obj, char *name, double *to_set){
     printf("check if %s has attr: %d \n", name, PyObject_HasAttrString(obj,name));
     PyArrayObject *data_py = (PyArrayObject *) PyObject_GetAttrString(obj, name);
@@ -145,6 +170,15 @@ void set_double_array_from_np1D(PyObject *obj, char *name, double *to_set){
     double *data = (double *) PyArray_DATA(data_py);
     for (size_t i = 0; i<PyArray_DIMS(data_py)[0]; i++){ 
         to_set[i] = data[i];
+    }
+}
+void set_int_array_from_np1D(PyObject *obj, char *name, int *to_set){
+    printf("check if %s has attr: %d \n", name, PyObject_HasAttrString(obj,name));
+    PyArrayObject *data_py = (PyArrayObject *) PyObject_GetAttrString(obj, name);
+    //TODO vediamo se va bene!
+    long *data = (long *) PyArray_DATA(data_py);
+    for (size_t i = 0; i<PyArray_DIMS(data_py)[0]; i++){ 
+        to_set[i] = (int) data[i];
     }
 }
 void set_double_array_from_list(PyObject *obj, char *name, double **to_set, int len){

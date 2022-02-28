@@ -30,7 +30,6 @@ static PyObject* py_f_roots(PyObject* self, PyObject* args) {
 }
 
 
-//-------------FPLOTS--------------------------------------------------------------------------------
 static PyObject* py_f_plot(PyObject* self, PyObject* args) {
   PyObject *di_py;
   PyObject *d_o_py;
@@ -46,10 +45,8 @@ static PyObject* py_f_plot(PyObject* self, PyObject* args) {
   d_o.kappa_j= (double*)calloc(di.n_kj,sizeof(double));
   d_o.i_bound = (int*)calloc(di.n_kj*3,sizeof(int));
   d_o.kappa_z0 = (double*)calloc(di.n_kj*3*di.ni,sizeof(double));
-  set_double_array_from_np1D(d_o_py, "kappa_j",d_o.kappa_j);
   set_double_array_from_np1D(d_o_py, "kappa_z0",d_o.kappa_z0);
   set_int_array_from_np1D(d_o_py, "i_bound",d_o.i_bound);
-  //dp.r_tpsf = (double*)calloc(N_PUNTI_TPSF_MAX,N_REC_MAX,sizeof(double));
   set_double_array_from_np1D(d_o_py, "kappa_j",d_o.kappa_j);
   for (int j=0; j<N_REC_MAX; j++)
 	{
@@ -144,13 +141,11 @@ void parse_di_py(PyObject *di_py,struct DataInput *di){
 void set_int_from_py(PyObject *obj, char *name, int *to_set){
     PyObject *attr = PyObject_GetAttrString(obj, name);
     PyArg_Parse(attr, "i", to_set);
-    //if(PRINT) printf("%s = %d\n", name, *to_set);
     
 }
 void set_double_from_py(PyObject *obj, char *name, double *to_set){
     PyObject *attr = PyObject_GetAttrString(obj, name);
     PyArg_Parse(attr, "d", to_set);    
-    //if(PRINT) printf("%s = %f\n", name, *to_set);
 }
 void set_double_np2d_from_matrix(PyObject *obj, char *name, double **to_set){
     PyArrayObject *data_py = (PyArrayObject *) PyObject_GetAttrString(obj, name);
@@ -164,7 +159,6 @@ void set_double_np2d_from_matrix(PyObject *obj, char *name, double **to_set){
     }
 }
 void set_double_array_from_np1D(PyObject *obj, char *name, double *to_set){
-    printf("check if %s has attr: %d \n", name, PyObject_HasAttrString(obj,name));
     PyArrayObject *data_py = (PyArrayObject *) PyObject_GetAttrString(obj, name);
     //TODO vediamo se va bene!
     double *data = (double *) PyArray_DATA(data_py);
@@ -173,7 +167,6 @@ void set_double_array_from_np1D(PyObject *obj, char *name, double *to_set){
     }
 }
 void set_int_array_from_np1D(PyObject *obj, char *name, int *to_set){
-    printf("check if %s has attr: %d \n", name, PyObject_HasAttrString(obj,name));
     PyArrayObject *data_py = (PyArrayObject *) PyObject_GetAttrString(obj, name);
     //TODO vediamo se va bene!
     long *data = (long *) PyArray_DATA(data_py);
@@ -186,11 +179,9 @@ void set_double_array_from_list(PyObject *obj, char *name, double **to_set, int 
     for(size_t i = 0; i<len; i++){
         PyObject * item = PyList_GET_ITEM(obj,i);//TODO non devo incrementare?
         PyArg_Parse(item, "d", *to_set[i]);
-        
-    }  
+    } 
 }
 void set_double_np1D_from_array(PyObject *obj,char *name, const double *data){
-    printf("check if %s has attr: %d \n", name, PyObject_HasAttrString(obj,name));
     PyArrayObject *to_set = (PyArrayObject *) PyObject_GetAttrString(obj, name);
     double *data_out = PyArray_DATA(to_set);
     for (size_t i = 0; i<PyArray_DIMS(to_set)[0]; i++)
@@ -198,13 +189,10 @@ void set_double_np1D_from_array(PyObject *obj,char *name, const double *data){
 }
 
 void set_int_np1D_from_array(PyObject *obj,char *name, const int *data){
-    printf("check if %s has attr: %d \n", name, PyObject_HasAttrString(obj,name));
     PyArrayObject *to_set = (PyArrayObject *) PyObject_GetAttrString(obj, name);
     long *data_out = PyArray_DATA(to_set);
-    for (size_t i = 0; i<PyArray_DIMS(to_set)[0]; i++){ 
+    for (size_t i = 0; i<PyArray_DIMS(to_set)[0]; i++)
         data_out[i] = (long) data[i];
-        //printf("%s[%ld] = %ld \n", name,i,data_out[i]);
-    }
 }
 
 void set_list_double_from_array(PyObject *list, double *array, int len){

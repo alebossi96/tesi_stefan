@@ -135,6 +135,7 @@ void parse_di_py(PyObject *di_py,struct DataInput *di){
     set_double_from_py(di_py, "ud1", &di->ud1);
     set_double_from_py(di_py, "usR0", &di->usR0); 
     set_double_from_py(di_py, "usR1", &di->usR1);
+    set_double_from_py(di_py, "ro", &di->ro);
 }
 
 

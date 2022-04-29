@@ -341,7 +341,6 @@ void f_plot(struct DataInput di, struct DataOutput_raw *d_o, struct Data_plot *d
  double t,kj,kz0;
 // questa funzione costruisce il vettore del profilo temporale uttilizzando le radici calcolate dalla funzione f_roots
 
-
 	for (i=0; i<di.n_tpsf; i++)
 		{
           t=di.tmin+i*di.dt;
@@ -353,6 +352,7 @@ void f_plot(struct DataInput di, struct DataOutput_raw *d_o, struct Data_plot *d
 					{
 					  index_a=(di.n_kj*3)*ii+3*j+0;
 					  kz0=d_o->kappa_z0[index_a];
+					  
 					  dp->r_tpsf[i][i_r]=dp->r_tpsf[i][i_r]+r_cyl_2_r_i(t,kz0,kj,di);
 					  //dp->t_tpsf[i][i_r]=dp->t_tpsf[i][i_r]+t_cyl_2_r_i(t,kz0,kj,di);
 					}
@@ -373,7 +373,8 @@ void f_plot(struct DataInput di, struct DataOutput_raw *d_o, struct Data_plot *d
 					  //dp->t_tpsf[i][i_r]=dp->t_tpsf[i][i_r]+t_cyl_2_r_r(t,kz0,kj,di);
 					}	
 			  }
-		}	
+		}
+		printf("\n");	
 }
 // fine funzione f_plot
 //-----------------------------------------------------------*
@@ -605,7 +606,6 @@ static double ft_cyl_2_i_r (double square, double kz0,struct DataInput di)
 {
       double d0,d1,f_out,ga0,j1,j0;
       double kz1_2,mod_kz1,b1,ga1,arg1,Nl,vedo,vedo1,vedo2;
-
 	  j1=bessj1(di.R*kj);
 	  j0=bessj0(di.ro*kj);
 	  

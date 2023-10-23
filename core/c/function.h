@@ -4,6 +4,8 @@
 // risulta dare valori sbagliati quando l'argomento della funzione supera in modulo il valore di |36|. 
 // IL valore risulta il doppio del valore vero
 //#include <analysis.h>
+#ifndef FUNCTION_STEFAN
+#define FUNCTION_STEFAN
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -108,4 +110,4 @@ void copyStruct(struct DataInput, struct DataInput *);
 void Jacobian(int);
 
 double *dfdu1, *dfds1, *dfdu2, *dfds2, *dFidu1, *dFidu2;
-
+#endif

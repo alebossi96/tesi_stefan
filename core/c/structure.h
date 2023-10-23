@@ -1,3 +1,6 @@
+#ifndef STRUCTURE_H
+#define STRUCTURE_H
+
 #define N_REC_MAX	     7
 #define N_PUNTI_TPSF_MAX 400
 
@@ -101,3 +104,4 @@ struct Data_plot_Raman
 //  double square; // square parameter
 
 //};
+#endif

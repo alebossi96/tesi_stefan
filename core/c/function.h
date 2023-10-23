@@ -18,53 +18,53 @@
 #define N_D	2000     
 //#define LOG 
 
-struct DataInput di; //data input
-struct DataInput did1; //data input with differential absorption added for layer 1
-struct DataInput did2; //data input with differential absorption added for layer 2
-struct DataInput didd1; //data input with second differential absorption added for layer 1
-struct DataInput didd2; //data input with second differential absorption added for layer 2
-struct DataInput dis1; //data input with differential scattering added for layer 1
-struct DataInput dis2; //data input with differential scattering added for layer 2
-struct DataInput did1d2; //data input with differential absorption added for layer 1 and layer 2
-struct DataInput did1s1; //data input with differential absorption added for layer 1 and differential scattering added for layer 1
-struct DataInput did2s1; //data input with differential absorption added for layer 2 and differential scattering added for layer 1
-struct DataInput did1s2; //data input with differential absorption added for layer 1 and differential scattering added for layer 2
-struct DataInput did2s2; //data input with differential absorption added for layer 2 and differential scattering added for layer 2
+extern struct DataInput di; //data input
+extern struct DataInput did1; //data input with differential absorption added for layer 1
+extern struct DataInput did2; //data input with differential absorption added for layer 2
+extern struct DataInput didd1; //data input with second differential absorption added for layer 1
+extern struct DataInput didd2; //data input with second differential absorption added for layer 2
+extern struct DataInput dis1; //data input with differential scattering added for layer 1
+extern struct DataInput dis2; //data input with differential scattering added for layer 2
+extern struct DataInput did1d2; //data input with differential absorption added for layer 1 and layer 2
+extern struct DataInput did1s1; //data input with differential absorption added for layer 1 and differential scattering added for layer 1
+extern struct DataInput did2s1; //data input with differential absorption added for layer 2 and differential scattering added for layer 1
+extern struct DataInput did1s2; //data input with differential absorption added for layer 1 and differential scattering added for layer 2
+extern struct DataInput did2s2; //data input with differential absorption added for layer 2 and differential scattering added for layer 2
 
 
-struct DataOutput_raw d_o;
-struct DataOutput_raw d_o_d1; //data output for differential absorption added for layer 1
-struct DataOutput_raw d_o_d2; //data output for differential absorption added for layer 2
-struct DataOutput_raw d_o_dd1; //data output for second differential absorption added for layer 1
-struct DataOutput_raw d_o_dd2; //data output for second differential absorption added for layer 2
-struct DataOutput_raw d_o_s1; //data output for differential scattering added for layer 1
-struct DataOutput_raw d_o_s2; //data output for differential scattering added for layer 2
-struct DataOutput_raw d_o_d1d2; //data output for differential absorption added for layer 1 and layer 2
-struct DataOutput_raw d_o_d1s1; //data output for differential absorption added for layer 1 and differential scattering added for layer 1
-struct DataOutput_raw d_o_d2s1; //data output for differential absorption added for layer 2 and differential scattering added for layer 1
-struct DataOutput_raw d_o_d1s2; //data output for differential absorption added for layer 1 and differential scattering added for layer 2
-struct DataOutput_raw d_o_d2s2; //data output for differential absorption added for layer 2 and differential scattering added for layer 2
+extern struct DataOutput_raw d_o;
+extern struct DataOutput_raw d_o_d1; //data output for differential absorption added for layer 1
+extern struct DataOutput_raw d_o_d2; //data output for differential absorption added for layer 2
+extern struct DataOutput_raw d_o_dd1; //data output for second differential absorption added for layer 1
+extern struct DataOutput_raw d_o_dd2; //data output for second differential absorption added for layer 2
+extern struct DataOutput_raw d_o_s1; //data output for differential scattering added for layer 1
+extern struct DataOutput_raw d_o_s2; //data output for differential scattering added for layer 2
+extern struct DataOutput_raw d_o_d1d2; //data output for differential absorption added for layer 1 and layer 2
+extern struct DataOutput_raw d_o_d1s1; //data output for differential absorption added for layer 1 and differential scattering added for layer 1
+extern struct DataOutput_raw d_o_d2s1; //data output for differential absorption added for layer 2 and differential scattering added for layer 1
+extern struct DataOutput_raw d_o_d1s2; //data output for differential absorption added for layer 1 and differential scattering added for layer 2
+extern struct DataOutput_raw d_o_d2s2; //data output for differential absorption added for layer 2 and differential scattering added for layer 2
 
 
-//struct DataCurrent dc;
-struct Data_plot dp;
-struct Data_plot dpd1; //data plot for differential absorption added for layer 1
-struct Data_plot dpd2; //data plot for differential absorption added for layer 1
-struct Data_plot dpdd1; //data plot for second differential absorption added for layer 1
-struct Data_plot dpdd2; //data plot for second differential absorption added for layer 2
-struct Data_plot dps1; //data plot for differential scattering added for layer 1
-struct Data_plot dps2; //data plot for differential scattering added for layer 2
-struct Data_plot dpd1d2; //data output for differential absorption added for layer 1 and layer 2
-struct Data_plot dpd1s1; //data output for differential absorption added for layer 1 and differential scattering added for layer 1
-struct Data_plot dpd2s1; //data output for differential absorption added for layer 2 and differential scattering added for layer 1
-struct Data_plot dpd1s2; //data output for differential absorption added for layer 1 and differential scattering added for layer 2
-struct Data_plot dpd2s2; //data plot for differential absorption added for layer 2 and differential scattering added for layer 2
+//extern struct DataCurrent dc;
+extern struct Data_plot dp;
+extern struct Data_plot dpd1; //data plot for differential absorption added for layer 1
+extern struct Data_plot dpd2; //data plot for differential absorption added for layer 1
+extern struct Data_plot dpdd1; //data plot for second differential absorption added for layer 1
+extern struct Data_plot dpdd2; //data plot for second differential absorption added for layer 2
+extern struct Data_plot dps1; //data plot for differential scattering added for layer 1
+extern struct Data_plot dps2; //data plot for differential scattering added for layer 2
+extern struct Data_plot dpd1d2; //data output for differential absorption added for layer 1 and layer 2
+extern struct Data_plot dpd1s1; //data output for differential absorption added for layer 1 and differential scattering added for layer 1
+extern struct Data_plot dpd2s1; //data output for differential absorption added for layer 2 and differential scattering added for layer 1
+extern struct Data_plot dpd1s2; //data output for differential absorption added for layer 1 and differential scattering added for layer 2
+extern struct Data_plot dpd2s2; //data plot for differential absorption added for layer 2 and differential scattering added for layer 2
 
-struct Data_plot_Raman dpR;
-struct Data_plot_Raman dpRd1;
-struct Data_plot_Raman dpRd2;
-struct Data_plot_Raman dpRds1;
-struct Data_plot_Raman dpRds2;
+extern struct Data_plot_Raman dpR;
+extern struct Data_plot_Raman dpRd1;
+extern struct Data_plot_Raman dpRd2;
+extern struct Data_plot_Raman dpRds1;
+extern struct Data_plot_Raman dpRds2;
 
 void inte(struct DataInput);
 void integ(struct DataInput *);  

@@ -5,6 +5,7 @@ Created on Sun Aug  9 14:53:55 2020
 @author: ŠUŠNJAR
 """
 import tesi_stefan.core.Functions as fn
+import tesi_stefan.core.c.functionmodule as fn_c
 from tesi_stefan.core.DataStructures import*
 import copy
 import numpy as np
@@ -41,6 +42,7 @@ class ForwardModel(object):
             self.d_o = DataOutputRaw(self.di)
             self.did1 = copy.deepcopy(self.di)
             self.did2 = copy.deepcopy(self.di)
+            
             self.did1.ua0 = (1+relative_increment_absorption)*self.di.ua0 #relative increment of absorption coefficient is 10^(-4) for numerical derivative calculation
             self.did2.ua1 = (1+relative_increment_absorption)*self.di.ua1 #relative increment of absorption coefficient is 10^(-4) for numerical derivative calculation
             self.d_o_d1 = copy.deepcopy(self.d_o)
@@ -52,17 +54,21 @@ class ForwardModel(object):
             self.dpR = DataPlotRaman()
             #TODO critical
             #TODO capire se queste funzioni esistono già fatte
-            fn.f_roots(self.di,self.d_o)
-            fn.f_roots(self.did1,self.d_o_d1)
-            fn.f_roots(self.did2,self.d_o_d2)
+
+            
+            fn_c.f_roots(self.di,self.d_o)
+
+            fn_c.f_roots(self.did1,self.d_o_d1)
+            fn_c.f_roots(self.did2,self.d_o_d2)
             
             for i_r in range(0,self.di.n_rec):
                 self.di.ro = self.di.rec[i_r]
                 self.did1.ro = self.did1.rec[i_r]
                 self.did2.ro = self.did2.rec[i_r]
-                fn.f_plot(self.di,self.d_o,self.dp,i_r)
-                fn.f_plot(self.did1,self.d_o_d1,self.dpd1,i_r)
-                fn.f_plot(self.did2,self.d_o_d2,self.dpd2,i_r)
+                fn_c.f_plot(self.di,self.d_o,self.dp,i_r)
+               
+                fn_c.f_plot(self.did1,self.d_o_d1,self.dpd1,i_r)
+                fn_c.f_plot(self.did2,self.d_o_d2,self.dpd2,i_r)
                 fn.f_plot_Raman(self.di,self.did1,self.did2,self.dp,self.dpd1,self.dpd2,self.dpR,i_r)
 
             #Calculation of sensitivity matrix W(x)
@@ -85,17 +91,17 @@ class ForwardModel(object):
         self.dpd2 = DataPlot()
         self.dpR = DataPlotRaman()
         
-        fn.f_roots(self.di,self.d_o)
-        fn.f_roots(self.did1,self.d_o_d1)
-        fn.f_roots(self.did2,self.d_o_d2)
+        fn_c.f_roots(self.di,self.d_o)
+        fn_c.f_roots(self.did1,self.d_o_d1)
+        fn_c.f_roots(self.did2,self.d_o_d2)
         
         for i_r in range(0,self.di.n_rec):
             self.di.ro = self.di.rec[i_r]
             self.did1.ro = self.did1.rec[i_r]
             self.did2.ro = self.did2.rec[i_r]
-            fn.f_plot(self.di,self.d_o,self.dp,i_r)
-            fn.f_plot(self.did1,self.d_o_d1,self.dpd1,i_r)
-            fn.f_plot(self.did2,self.d_o_d2,self.dpd2,i_r)
+            fn_c.f_plot(self.di,self.d_o,self.dp,i_r)
+            fn_c.f_plot(self.did1,self.d_o_d1,self.dpd1,i_r)
+            fn_c.f_plot(self.did2,self.d_o_d2,self.dpd2,i_r)
             fn.f_plot_Raman(self.di,self.did1,self.did2,self.dp,self.dpd1,self.dpd2,self.dpR,i_r)
         
         

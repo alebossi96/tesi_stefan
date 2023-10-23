@@ -221,7 +221,7 @@ class DataInput(object):
             self.nhi = int(string)    
 
         self.n0e=self.n0/self.ne;
-        self.n1e=self.n1/self.ne;
+        self.n1e=self.n1/self.ne;#TODO ma è giusto????
         self.A0e=fn.dAA_cyl(self.n0e);
         self.A1e=fn.dAA_cyl(self.n1e);
         self.pi=2*math.asin(1.);
@@ -229,7 +229,7 @@ class DataInput(object):
         self.v1=self.c/self.n1;
         
         self.dt = time_step
-        self.n_tpsf = n_tpsf
+        self.n_tpsf =n_tpsf
         self.z0 = geometry.thickness_top
         self.z1 = geometry.thickness_bottom
         self.rec[0] = geometry.source_det_distance        

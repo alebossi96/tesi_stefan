@@ -23,7 +23,6 @@ extern struct DataInput did1; //data input with differential absorption added fo
 extern struct DataInput did2; //data input with differential absorption added for layer 2
 extern struct DataInput didd1; //data input with second differential absorption added for layer 1
 extern struct DataInput didd2; //data input with second differential absorption added for layer 2
-extern struct DataInput dis1; //data input with differential scattering added for layer 1
 extern struct DataInput dis2; //data input with differential scattering added for layer 2
 extern struct DataInput did1d2; //data input with differential absorption added for layer 1 and layer 2
 extern struct DataInput did1s1; //data input with differential absorption added for layer 1 and differential scattering added for layer 1

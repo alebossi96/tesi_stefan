@@ -391,30 +391,9 @@ void f_plot_Raman(struct DataInput di, struct DataInput did1, struct DataInput d
 	
 }
 
-void Jacobian(int i_r)
-{
-	for (int i = 0; i < di.n_tpsf; i++)
-	{
-		dfdu1[i] = -di.usR0*(dpdd1.r_tpsf[i][i_r]-2*dpd1.r_tpsf[i][i_r]+dp.r_tpsf[i][i_r]) / ((did1.ua0 - di.ua0)*(did1.ua0 - di.ua0))
-			-di.usR1*(dpd1d2.r_tpsf[i][i_r]-dpd1.r_tpsf[i][i_r]-dpd2.r_tpsf[i][i_r]+dp.r_tpsf[i][i_r])/((did1.ua0 - di.ua0)*(did2.ua1-di.ua1));
-
-		dfds1[i] = -di.usR0*(dpd1s1.r_tpsf[i][i_r] - dpd1.r_tpsf[i][i_r] - dps1.r_tpsf[i][i_r] + dp.r_tpsf[i][i_r]) / ((did1.ua0 - di.ua0)*(dis1.ud0 - di.ud0))
-			- di.usR1*(dpd2s1.r_tpsf[i][i_r] - dpd2.r_tpsf[i][i_r] - dps1.r_tpsf[i][i_r] + dp.r_tpsf[i][i_r]) / ((did2.ua1-di.ua1)*(dis1.ud0-di.ud0));
-
-		dfdu2[i] = -di.usR0*(dpd1d2.r_tpsf[i][i_r] - dpd1.r_tpsf[i][i_r] - dpd2.r_tpsf[i][i_r] + dp.r_tpsf[i][i_r]) / ((did1.ua0 - di.ua0)*(did2.ua1 - di.ua1))
-			- di.usR1*(dpdd2.r_tpsf[i][i_r] - 2*dpd2.r_tpsf[i][i_r] + dp.r_tpsf[i][i_r]) / ((did2.ua1 - di.ua1)*(did2.ua1 - di.ua1));
-
-		dfds2[i] = -di.usR0*(dpd1s2.r_tpsf[i][i_r] - dpd1.r_tpsf[i][i_r] - dps2.r_tpsf[i][i_r] + dp.r_tpsf[i][i_r]) / ((did1.ua0 - di.ua0)*(dis2.ud1 - di.ud1))
-			- di.usR1*(dpd2s2.r_tpsf[i][i_r] - dpd2.r_tpsf[i][i_r] - dps2.r_tpsf[i][i_r] + dp.r_tpsf[i][i_r]) / ((did2.ua1 - di.ua1)*(dis2.ud1 - di.ud1));
-
-		dFidu1[i] = (dp.r_tpsf[i][i_r] - dpd1.r_tpsf[i][i_r]) / (did1.ua0 - di.ua0);
-
-		dFidu1[i] = (dp.r_tpsf[i][i_r] - dpd2.r_tpsf[i][i_r]) / (did2.ua1 - di.ua1);
-	}
-}
 
 
-      double dAA_cyl (double an12)
+double dAA_cyl (double an12)
 {      
       double A;
       if (an12 > 1.)

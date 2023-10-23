@@ -1,6 +1,6 @@
 //problema i_bound
 #define PY_SSIZE_T_CLEAN
-#include "python3.8/Python.h"
+#include "python3.10/Python.h"
 #include<stdio.h>
 #include "function.h"
 #include<stdlib.h>

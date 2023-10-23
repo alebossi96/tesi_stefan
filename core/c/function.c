@@ -374,7 +374,6 @@ void f_plot(struct DataInput di, struct DataOutput_raw *d_o, struct Data_plot *d
 					}	
 			  }
 		}
-		printf("\n");	
 }
 // fine funzione f_plot
 //-----------------------------------------------------------*

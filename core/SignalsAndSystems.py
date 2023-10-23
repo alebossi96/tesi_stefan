@@ -8,7 +8,7 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 import tesi_stefan.core.ResolutionToPoints as rtp
-from  librerieTesi.diffuseRaman import core
+import tesi_stefan.core_f as core
 class Spectrum(object):
     #lambda - l
     #value of spectrum - s

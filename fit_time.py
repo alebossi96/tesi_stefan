@@ -2,9 +2,9 @@ import numpy as np
 import math 
 import scipy
 import scipy.special
-import core.ForwardModel as fwd
-import core.Geometry as geo
-import core_f as core
+import tesi_stefan.core.ForwardModel as fwd
+import tesi_stefan.core.Geometry as geo
+import tesi_stefan.core_f as core
 import matplotlib.pyplot as plt
 def geometry(mu_s_top, mu_s_bottom):
     return geo.Geometry(thickness_top = 10, thickness_bottom = 10,

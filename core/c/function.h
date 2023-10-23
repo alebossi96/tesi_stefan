@@ -109,5 +109,5 @@ void selectionSort(int, double *);
 void copyStruct(struct DataInput, struct DataInput *);
 void Jacobian(int);
 
-double *dfdu1, *dfds1, *dfdu2, *dfds2, *dFidu1, *dFidu2;
+extern double *dfdu1, *dfds1, *dfdu2, *dfds2, *dFidu1, *dFidu2;
 #endif
